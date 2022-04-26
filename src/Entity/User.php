@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -27,6 +29,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 255)]
     private $email;
+
+    #[ORM\ManyToMany(targetEntity: Read::class, mappedBy: 'user')]
+    private $readBook;
+
+    #[ORM\ManyToMany(targetEntity: ToRead::class, mappedBy: 'user')]
+    private $toReads;
+
+    public function __construct()
+    {
+        $this->readBook = new ArrayCollection();
+        $this->toReads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +120,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Read>
+     */
+    public function getReadBook(): Collection
+    {
+        return $this->readBook;
+    }
+
+    public function addReadBook(Read $readBook): self
+    {
+        if (!$this->readBook->contains($readBook)) {
+            $this->readBook[] = $readBook;
+            $readBook->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReadBook(Read $readBook): self
+    {
+        if ($this->readBook->removeElement($readBook)) {
+            $readBook->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ToRead>
+     */
+    public function getToReads(): Collection
+    {
+        return $this->toReads;
+    }
+
+    public function addToRead(ToRead $toRead): self
+    {
+        if (!$this->toReads->contains($toRead)) {
+            $this->toReads[] = $toRead;
+            $toRead->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeToRead(ToRead $toRead): self
+    {
+        if ($this->toReads->removeElement($toRead)) {
+            $toRead->removeUser($this);
+        }
 
         return $this;
     }
