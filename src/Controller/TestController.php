@@ -33,6 +33,5 @@ class TestController extends AbstractController
         $em->persist($user2);
         $em->flush();
         return new JsonResponse(['response'=>'ok']);
-
     }
 }

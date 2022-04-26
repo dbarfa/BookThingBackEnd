@@ -36,6 +36,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: ToRead::class, mappedBy: 'user')]
     private $toReads;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $gender;
+
     public function __construct()
     {
         $this->readBook = new ArrayCollection();
@@ -174,6 +177,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->toReads->removeElement($toRead)) {
             $toRead->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
 
         return $this;
     }
