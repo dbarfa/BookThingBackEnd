@@ -1,14 +1,12 @@
 <?php
 
 namespace App\DTO;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ReadDTO
+class ToReadDTO
 {
     #[Assert\NotNull]
     private string $book;
-
 
     /**
      * @return string
@@ -20,13 +18,14 @@ class ReadDTO
 
     /**
      * @param string $book
-     * @return ReadDTO
+     * @return ToReadDTO
      */
-    public function setBook(string $book): ReadDTO
+    public function setBook(string $book): ToReadDTO
     {
         $this->book = $book;
         return $this;
     }
+
 
 
 }

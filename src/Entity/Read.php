@@ -16,7 +16,7 @@ class Read
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255,unique: true)]
     private $worksId;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'readBook')]
