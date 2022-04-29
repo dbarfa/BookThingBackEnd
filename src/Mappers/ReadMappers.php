@@ -12,6 +12,7 @@ class ReadMappers
         $user = $userdata;
         $read = new Read();
         $read->setWorksId($dto->getBook());
+        $read->setAuthor($dto->getAuthor());
         $read->addUser($user);
         return $read;
     }

@@ -9,7 +9,7 @@ class ReadDTO
     #[Assert\NotNull]
     private string $book;
 
-
+    private string $author;
     /**
      * @return string
      */
@@ -25,6 +25,24 @@ class ReadDTO
     public function setBook(string $book): ReadDTO
     {
         $this->book = $book;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthor(): string
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param string $author
+     * @return ReadDTO
+     */
+    public function setAuthor(string $author): ReadDTO
+    {
+        $this->author = $author;
         return $this;
     }
 
