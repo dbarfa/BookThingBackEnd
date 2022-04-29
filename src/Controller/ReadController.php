@@ -8,10 +8,12 @@ use App\Mappers\ReadMappers;
 use App\Repository\ReadRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ReadController extends AbstractFOSRestController
@@ -61,6 +63,28 @@ class ReadController extends AbstractFOSRestController
             $em->remove($read);
         }
         $em->flush();
+    }
 
+    #[Get('api/read/getall', name: 'get_all_read')]
+    #[View]
+    #[IsGranted('ROLE_USER')]
+    public function getAllRead(ReadRepository $readRepository)
+    {
+        /** @var  $user User */
+        $user = $this->getUser();
+        $read = $readRepository->findAll();
+        $filteredRead = [];
+        $i = 1;
+        foreach ($read as $item) {
+            if (in_array($user, $item->getUser()->toArray())) {
+                $filteredRead[] = [$item->getWorksId()];
+                $i++;
+            }
+        }
+
+        $filteredRead = json_encode($filteredRead,JSON_UNESCAPED_SLASHES);
+        return JsonResponse::fromJsonString(
+            $filteredRead
+        );
     }
 }

@@ -9,10 +9,12 @@ use App\Repository\ToReadRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ToReadController extends AbstractFOSRestController
@@ -62,24 +64,24 @@ class ToReadController extends AbstractFOSRestController
         $em->flush();
     }
 
-    #[Post('api/toread/getall', name: 'get_all_to_read')]
+    #[Get('api/toread/getall', name: 'get_all_to_read')]
     #[View]
+    #[IsGranted('ROLE_USER')]
     public function getAllToRead(ToReadRepository $toReadRepository)
     {
         /** @var  $user User */
         $user = $this->getUser();
         $toRead = $toReadRepository->findAll();
-        dump($toRead);
-        dump($toRead[0]->getUser());
-
-        foreach ($toRead as $item){
-            if (in_array($user,$item->getUser()->toArray())){
-                dump('true');
-            }else{
-                dump('false');
+        $filteredtoRead = [];
+        $i = 1;
+        foreach ($toRead as $item) {
+            if (in_array($user, $item->getUser()->toArray())) {
+                $filteredtoRead[$i] = $item->getWorksId();
             }
-            dump($item);
         }
-        /** ToAdd  */
+        $filteredtoRead = json_encode($filteredtoRead, JSON_UNESCAPED_SLASHES);
+        return JsonResponse::fromJsonString(
+            $filteredtoRead
+        );
     }
 }
