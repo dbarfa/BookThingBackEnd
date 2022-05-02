@@ -76,7 +76,9 @@ class ToReadController extends AbstractFOSRestController
         $i = 1;
         foreach ($toRead as $item) {
             if (in_array($user, $item->getUser()->toArray())) {
-                $filteredtoRead[$i] = $item->getWorksId();
+                $filteredtoRead[] = ['work' => $item->getWorksId(), "author" =>$item->getAuthor()];
+                $i++;
+
             }
         }
         $filteredtoRead = json_encode($filteredtoRead, JSON_UNESCAPED_SLASHES);

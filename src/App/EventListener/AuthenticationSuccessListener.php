@@ -12,12 +12,9 @@ class AuthenticationSuccessListener
     public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
     {
         $data = $event->getData();
-
-
         $data['data'] = array(
             'email' => 'test',
         );
-
         $event->setData($data);
     }
 }

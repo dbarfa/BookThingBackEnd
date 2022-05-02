@@ -35,7 +35,6 @@ class Read
         return $this->id;
     }
 
-
     public function getWorksId(): ?string
     {
         return $this->worksId;

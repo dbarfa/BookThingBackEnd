@@ -42,7 +42,6 @@ class ReadController extends AbstractFOSRestController
         }
 
         $em->flush();
-        return;
     }
 
     #[Post('api/read/delete', name: 'delete_read')]
@@ -81,10 +80,6 @@ class ReadController extends AbstractFOSRestController
                 $i++;
             }
         }
-//        $filteredRead2Json = [];
-//        for ($i = 0; $i<count($filteredRead); $i++){
-//            $filteredRead2Json[$i + 1] = $filteredRead[$i]->getWorksId();
-//        }
         $filteredRead = json_encode($filteredRead,JSON_UNESCAPED_SLASHES);
         return JsonResponse::fromJsonString(
             $filteredRead

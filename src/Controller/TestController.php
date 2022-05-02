@@ -15,7 +15,6 @@ class TestController extends AbstractController
     #[Route('/test', name: 'app_test')]
     public function index(UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em): Response
     {
-
         $user1 = new User();
         $user1->setUsername('Khun');
         $user1->setRoles(['ROLE_USER',
@@ -28,12 +27,9 @@ class TestController extends AbstractController
         ]);
         $user2->setPassword($userPasswordHasher->hashPassword($user2,'test123'));
         $user2->setEmail('Fatima@Fatima.com');
-
         $em->persist($user1);
         $em->persist($user2);
         $em->flush();
         return new JsonResponse(['response'=>'ok']);
     }
-
-
 }

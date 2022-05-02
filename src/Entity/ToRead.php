@@ -21,6 +21,11 @@ class ToRead
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'toReads')]
     private $user;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $author;
+    
+
+
     public function __construct()
     {
         $this->user = new ArrayCollection();
@@ -63,6 +68,18 @@ class ToRead
     public function removeUser(User $user): self
     {
         $this->user->removeElement($user);
+
+        return $this;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?string $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }
