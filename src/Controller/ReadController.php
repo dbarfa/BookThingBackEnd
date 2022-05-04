@@ -6,6 +6,7 @@ use App\DTO\ReadDTO;
 use App\Entity\User;
 use App\Mappers\ReadMappers;
 use App\Repository\ReadRepository;
+use App\Repository\ToReadRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
@@ -24,13 +25,21 @@ class ReadController extends AbstractFOSRestController
     #[IsGranted('ROLE_USER')]
     public function post(ReadDTO                $dto,
                          EntityManagerInterface $em,
-                         ReadRepository         $readRepository
+                         ReadRepository         $readRepository,
+                         ToReadRepository       $toReadRepository
     )
     {
         /** @var  $user User */
         $user = $this->getUser();
         $read = ReadMappers::PostRead($dto, $user);
         $isInDB = $readRepository->findOneBy(['worksId' => $dto->getBook()]);
+        $isInToRead = $toReadRepository->findOneBy(['worksId' => $dto->getBook()]);
+
+        if ($isInToRead != null) {
+            throw new BadRequestHttpException();
+        }
+
+
         if ($isInDB != null) {
             if (in_array($user, $isInDB->getUser()->toArray())) {
                 throw new BadRequestHttpException();
@@ -76,11 +85,11 @@ class ReadController extends AbstractFOSRestController
         $i = 1;
         foreach ($read as $item) {
             if (in_array($user, $item->getUser()->toArray())) {
-                $filteredRead[] = ['work' => $item->getWorksId(), "author" =>$item->getAuthor()];
+                $filteredRead[] = ['work' => $item->getWorksId(), "author" => $item->getAuthor()];
                 $i++;
             }
         }
-        $filteredRead = json_encode($filteredRead,JSON_UNESCAPED_SLASHES);
+        $filteredRead = json_encode($filteredRead, JSON_UNESCAPED_SLASHES);
         return JsonResponse::fromJsonString(
             $filteredRead
         );

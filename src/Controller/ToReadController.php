@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\ToReadDTO;
 use App\Entity\User;
 use App\Mappers\ToReadMappers;
+use App\Repository\ReadRepository;
 use App\Repository\ToReadRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,13 +26,20 @@ class ToReadController extends AbstractFOSRestController
     #[IsGranted('ROLE_USER')]
     public function post(ToReadDTO              $dto,
                          EntityManagerInterface $em,
-                         ToReadRepository       $toReadRepository)
+                         ToReadRepository       $toReadRepository,
+                         ReadRepository         $readRepository)
     {
 
         /** @var  $user User */
         $user = $this->getUser();
         $toRead = ToReadMappers::PostToRead($dto, $user);
         $isInDb = $toReadRepository->findOneBy(['worksId' => $dto->getBook()]);
+        $isInRead = $readRepository->findOneBy(['worksId' => $dto->getBook()]);
+
+        if ($isInRead != null) {
+            throw new BadRequestHttpException();
+        }
+
         if ($isInDb != null) {
             if (in_array($user, $isInDb->getUser()->toArray())) {
                 throw new BadRequestHttpException();
@@ -76,7 +84,7 @@ class ToReadController extends AbstractFOSRestController
         $i = 1;
         foreach ($toRead as $item) {
             if (in_array($user, $item->getUser()->toArray())) {
-                $filteredtoRead[] = ['work' => $item->getWorksId(), "author" =>$item->getAuthor()];
+                $filteredtoRead[] = ['work' => $item->getWorksId(), "author" => $item->getAuthor()];
                 $i++;
 
             }
