@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Mappers\ToReadMappers;
 use App\Repository\ReadRepository;
 use App\Repository\ToReadRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
